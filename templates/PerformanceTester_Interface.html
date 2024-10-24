@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Performance Tester</title>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='/css/styles.css')}}"
+    />
+    <script src="{{ url_for('static', filename='js/PerformanceTesterScript.js') }}"></script>
+  </head>
+  <body>
+    <h1>Server Performance Tester</h1>
+    <a href="{{url_for('serverless')}}">Switch to Serverless Testing</a>
+    <br />
+    <br />
+    <form id="performanceTestForm">
+      <label for="test-type">Select test mode:</label>
+      <select id="test-type" name="test-type" required>
+        <option value="">--select test type--</option>
+        <option value="cpu">CPU</option>
+        <option value="memory">Memory</option>
+        <option value="storage">Storage</option>
+        <option value="combined">CPU and Memory (combined)</option>
+      </select>
+      <p id="testTypeChecker" style="display: inline"></p>
+
+      <div id="cpu-inputs" style="display: none">
+        <label for="cpu-n"
+          >Array length:
+          <span
+            class="info-icon"
+            title="The length of the array the CPU will sort using heapsort. Larger values will take longer to process."
+            >&#9432;</span
+          >
+        </label>
+        <input
+          type="number"
+          name="cpu-n"
+          id="cpu-n"
+          placeholder="Enter array length"
+          min="1"
+        />
+        <p id="cpuInputsChecker" style="display: inline"></p>
+      </div>
+
+      <div id="memory-inputs" style="display: none">
+        <label for="memory-n"
+          >Memory size (KB):
+          <span
+            class="info-icon"
+            title="The amount of memory in kilobytes that will be allocated for the memory test. The larger the memory size, the more memory will be utilized during the test. For accurate results of memory speed, the amount of memory chosen multiplied by the threshold should not exceed the amount of RAM the system has."
+            >&#9432;</span
+          >
+        </label>
+        <input
+          type="number"
+          id="memory-n"
+          name="memory-n"
+          placeholder="Enter memory size in KB"
+          min="1"
+        />
+        <p id="memoryInputsChecker" style="display: inline"></p>
+
+        <label for="memory-test-type">Test type (Read/Write):</label>
+        <select id="memory-test-type" name="memory-test-type">
+          <option value="read">Read</option>
+          <option value="write">Write</option>
+        </select>
+      </div>
+
+      <div id="storage-inputs" style="display: none">
+        <label for="storage-n"
+          >File size (MB):
+          <span
+            class="info-icon"
+            title="The size of the file, in megabytes, used for the storage test. Larger files will take longer to read/write, providing a more extensive test of the storage device"
+            >&#9432;</span
+          >
+        </label>
+
+        <input
+          type="number"
+          id="storage-n"
+          name="storage-n"
+          placeholder="Enter file size in MB"
+          min="1"
+        />
+        <p id="storageInputsChecker" style="display: inline"></p>
+        <label for="storage-test-type"
+          >Test type (sequential write/read, random write/read):
+          <span
+            class="info-icon"
+            title="Sequential tests read/write data in a continuous block, while random tests read/write data at various locations within the file."
+            >&#9432;</span
+          ></label
+        >
+
+        <select id="storage-test-type" name="storage-test-type">
+          <option value="random_read">Random read</option>
+          <option value="random_write">Random write</option>
+          <option value="sequential_read">Sequential read</option>
+          <option value="sequential_write">Sequential write</option>
+        </select>
+      </div>
+
+      <div id="combined-inputs" style="display: none">
+        <label for="combined-n"
+          >Array size (n):
+          <span
+            class="info-icon"
+            title="The length of the array the CPU will sort using mergesort. Larger values will take longer to process and will put more stress on the CPU and memory."
+            >&#9432;</span
+          >
+        </label>
+        <input
+          type="number"
+          id="combined-n"
+          name="combined-n"
+          placeholder="Enter array size"
+          min="1"
+        />
+        <p id="combinedInputsChecker" style="display: inline"></p>
+      </div>
+
+      <label for="threshold"
+        >Maximum concurrent benchmarks:
+        <span
+          class="info-icon"
+          title="The maximum amount of concurrent threads running on the server. The API starts with 1 thread and increases the number of threads running concurrently by one every iteration."
+          >&#9432;</span
+        >
+      </label>
+      <input type="number" name="threshold" id="threshold" />
+      <p id="thresholdChecker" style="display: inline"></p>
+
+      <button
+        id="startTestButton"
+        type="button"
+        style="display: block"
+        onclick="startPerformanceTest()"
+      >
+        Run Test
+      </button>
+    </form>
+
+    <br /><br />
+    <div id="testStatus" style="display: block"></div>
+    <br />
+    <div id="result" style="display: block"></div>
+  </body>
+</html>
