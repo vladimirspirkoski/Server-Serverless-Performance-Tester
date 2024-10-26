@@ -7,11 +7,12 @@
       rel="stylesheet"
       href="{{url_for('static', filename='/css/styles.css')}}"
     />
-    <title>Serverless functions performance tester</title>
+    <script src="{{ url_for('static', filename='js/ServerlessPerformanceTesterScript.js') }}"></script>
+    <title>Serverless Functions Performance Tester</title>
   </head>
 
   <body>
-    <h1>Serverless functions performance tester</h1>
+    <h1>Serverless Functions Performance Tester</h1>
     <a href="{{url_for('index')}}">Switch to Server Tester</a>
     <br /><br /><br />
 
@@ -23,35 +24,59 @@
     </select>
     <br /><br />
 
+    <!-- Input fields za AWS -->
     <div id="awsInputs">
-      <label for="lambdaFunctionName">Lambda Function Name:</label>
-      <input type="text" id="lambdaFunctionName" name="lambdaFunctionName" />
+      <label for="apiGatewayUrl">API Gateway URL:</label>
+      <input type="text" id="apiGatewayUrl" name="apiGatewayUrl" required />
       <br />
     </div>
 
+    <!-- Input fields za Azure -->
     <div id="azureInputs" style="display: none">
       <label for="azureFunctionUrl">Azure Function URL:</label>
-      <input type="text" id="azureFunctionUrl" name="azureFunctionUrl" />
+      <input
+        type="text"
+        id="azureFunctionUrl"
+        name="azureFunctionUrl"
+        required
+      />
       <br />
       <label for="azureFunctionKey">Azure Function Key:</label>
-      <input type="text" id="azureFunctionKey" name="azureFunctionKey" />
+      <input
+        type="text"
+        id="azureFunctionKey"
+        name="azureFunctionKey"
+        required
+      />
       <br />
     </div>
 
+    <!-- Input fields za Google -->
     <div id="gcloudInputs" style="display: none">
-      <label for="gcloudFunctionName">Google Cloud Function Name:</label>
-      <input type="text" id="gcloudFunctionName" name="gcloudFunctionName" />
+      <label for="gcloudFunctionUrl">Google Cloud Function URL:</label>
+      <input
+        type="text"
+        id="gcloudFunctionUrl"
+        name="gcloudFunctionUrl"
+        required
+      />
       <br />
       <label for="gcloudAccessToken">Access Token:</label>
-      <input type="text" id="gcloudAccessToken" name="gcloudAccessToken" />
+      <input
+        type="text"
+        id="gcloudAccessToken"
+        name="gcloudAccessToken"
+        required
+      />
       <br />
     </div>
 
+    <!-- Drugi inputs -->
     <label for="threshold">Threshold:</label>
-    <input type="number" id="threshold" name="threshold" />
+    <input type="number" id="threshold" name="threshold" required />
     <br />
     <label for="arraySize">Array Size:</label>
-    <input type="number" id="arraySize" name="arraySize" />
+    <input type="number" id="arraySize" name="arraySize" required />
     <br />
     <input
       type="submit"
@@ -70,201 +95,8 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Rows will be populated by the script -->
+        <!-- Se popolnuva dinamicki -->
       </tbody>
     </table>
-
-    <script>
-      function toggleInputs() {
-        const provider = document.getElementById("provider").value;
-        document.getElementById("awsInputs").style.display =
-          provider === "aws" ? "block" : "none";
-        document.getElementById("azureInputs").style.display =
-          provider === "azure" ? "block" : "none";
-        document.getElementById("gcloudInputs").style.display =
-          provider === "gcloud" ? "block" : "none";
-      }
-
-      async function processArray(event) {
-        event.preventDefault(); // Prevent default form submission
-
-        const provider = document.getElementById("provider").value;
-        let lambdaFunctionName = "";
-        let azureFunctionUrl = "";
-        let azureFunctionKey = "";
-        let gcloudFunctionName = "";
-        let gcloudAccessToken = "";
-        let thresholdValue = document.getElementById("threshold").value;
-        let arraySize = document.getElementById("arraySize").value;
-
-        clearPreviousResults(); // Clear previous results
-
-        // Access provider-specific inputs
-        if (provider === "aws") {
-          lambdaFunctionName =
-            document.getElementById("lambdaFunctionName").value;
-        } else if (provider === "azure") {
-          azureFunctionUrl = document.getElementById("azureFunctionUrl").value;
-          azureFunctionKey = document.getElementById("azureFunctionKey").value;
-        } else if (provider === "gcloud") {
-          gcloudFunctionName =
-            document.getElementById("gcloudFunctionName").value;
-          gcloudAccessToken =
-            document.getElementById("gcloudAccessToken").value;
-        }
-
-        // Validate threshold and array size
-        if (
-          thresholdValue === "" ||
-          parseInt(thresholdValue) <= 0 ||
-          arraySize === "" ||
-          parseInt(arraySize) <= 0
-        ) {
-          alert("Please enter valid threshold and array size.");
-          return;
-        }
-
-        // Start processing
-        for (let i = 1; i <= thresholdValue; i++) {
-          let startTime = performance.now(); // Start timing
-          let requests = [];
-
-          for (let j = 0; j < i; j++) {
-            requests.push(
-              invokeFunction(
-                provider,
-                lambdaFunctionName,
-                azureFunctionUrl,
-                azureFunctionKey,
-                gcloudFunctionName,
-                gcloudAccessToken,
-                arraySize
-              )
-            );
-          }
-
-          await Promise.all(requests); // Wait for all requests to resolve
-          let endTime = performance.now(); // End timing
-          let processingTime = (endTime - startTime) / 1000; // Convert to seconds
-
-          addRowToResultsTable(i, processingTime.toFixed(3)); // Add to results table
-        }
-        document.getElementById("result").innerHTML = "Finished"; // Show completion message
-        generateCSV(document.getElementById("resultsTable")); // Generate CSV
-      }
-
-      async function invokeFunction(
-        provider,
-        lambdaFunctionName,
-        azureFunctionUrl,
-        azureFunctionKey,
-        gcloudFunctionName,
-        gcloudAccessToken,
-        arraySize
-      ) {
-        return new Promise((resolve, reject) => {
-          if (provider === "aws") {
-            const apiUrl = "YOUR_API_GATEWAY_URL"; // Replace with your API Gateway URL for the Lambda function
-            fetch(apiUrl, {
-              method: "POST",
-              body: JSON.stringify({ arraySize: parseInt(arraySize) }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Network response was not ok");
-                }
-                return response.json();
-              })
-              .then((data) => resolve(data)) // Resolve with the data
-              .catch((error) => reject(error)); // Reject on error
-          } else if (provider === "azure") {
-            // Azure function invocation logic
-            fetch(`${azureFunctionUrl}?code=${azureFunctionKey}`, {
-              method: "POST",
-              body: JSON.stringify({ arraySize: parseInt(arraySize) }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Network response was not ok");
-                }
-                return response.json();
-              })
-              .then((data) => resolve(data)) // Resolve with the data
-              .catch((error) => reject(error)); // Reject on error
-          } else if (provider === "gcloud") {
-            // Google Cloud function invocation logic
-            fetch(
-              `https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/${gcloudFunctionName}`,
-              {
-                method: "POST",
-                body: JSON.stringify({ arraySize: parseInt(arraySize) }),
-                headers: {
-                  Authorization: `Bearer ${gcloudAccessToken}`,
-                  "Content-Type": "application/json",
-                },
-              }
-            )
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Network response was not ok");
-                }
-                return response.json();
-              })
-              .then((data) => resolve(data)) // Resolve with the data
-              .catch((error) => reject(error)); // Reject on error
-          } else {
-            reject(new Error("Unsupported provider")); // Reject if the provider is unsupported
-          }
-        });
-      }
-
-      function addRowToResultsTable(numberOfRequests, processingTime) {
-        let tableBody = document.getElementsByTagName("tbody")[0];
-        let newRow = tableBody.insertRow(); // Create a new row in the table body
-        newRow.insertCell(0).innerHTML = numberOfRequests; // Add request count
-        newRow.insertCell(1).innerHTML = processingTime; // Add processing time
-      }
-
-      function generateCSV(table) {
-        let csvContent = []; // Array for CSV data
-        let rows = table.getElementsByTagName("tr"); // Get all rows
-
-        let headerCells = rows[0].getElementsByTagName("th"); // Get header cells
-        let headerArray = Array.from(headerCells).map((cell) => cell.innerText);
-        csvContent.push(headerArray.join(",")); // Add headers to CSV
-
-        // Add each row of data
-        for (let i = 1; i < rows.length; i++) {
-          let dataCells = rows[i].getElementsByTagName("td");
-          let dataArray = Array.from(dataCells).map((cell) => cell.innerText);
-          csvContent.push(dataArray.join(","));
-        }
-
-        // Create a CSV blob and download it
-        let blob = new Blob([csvContent.join("\n")], {
-          type: "text/csv;charset=utf-8;",
-        });
-        let url = URL.createObjectURL(blob);
-        let link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", "results.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-      function clearPreviousResults() {
-        const tableBody = document.getElementsByTagName("tbody")[0];
-        while (tableBody.rows.length > 0) {
-          tableBody.deleteRow(0); // Remove all rows from the results table
-        }
-      }
-    </script>
   </body>
 </html>

@@ -75,7 +75,7 @@ def index():
 
 @app.route('/serverless', methods=["GET"])
 def serverless():
-    return render_template('Serverless_SortingAPI_Interface.html'), 200
+    return render_template('ServerlessPerformanceTester_Interface.html'), 200
 
 
 if __name__ == '__main__':
