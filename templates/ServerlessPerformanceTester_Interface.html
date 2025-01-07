@@ -18,22 +18,68 @@
 
     <label for="provider">Select Cloud Provider:</label>
     <select id="provider" onchange="toggleInputs()">
+      <option value="">--select test type--</option>
       <option value="aws">AWS</option>
       <option value="azure">Azure</option>
       <option value="gcloud">Google Cloud</option>
     </select>
-    <br /><br />
+    <br />
 
     <!-- Input fields za AWS -->
-    <div id="awsInputs">
-      <label for="apiGatewayUrl">API Gateway URL:</label>
+    <div id="awsInputs" style="display: none">
+      <label for="apiGatewayUrl"
+        >API Gateway URL:
+        <span
+          class="info-icon"
+          title="The URL of the API Gateway or the Function URL. Make sure that CORS allows all (your) domains before testing."
+          >&#9432;</span
+        >
+      </label>
       <input type="text" id="apiGatewayUrl" name="apiGatewayUrl" required />
       <br />
+      <label for="accessKeyID"
+        >Access Key ID:
+        <span
+          class="info-icon"
+          title="Access Key ID of your account. Leave empty if the function is public."
+          >&#9432;</span
+        >
+      </label>
+      <input
+        type="text"
+        id="acessKeyID"
+        name="accessKeyID"
+        placeholder="public"
+        required
+      />
+      <br />
+      <label for="secretAccessKey"
+        >Access Key ID:
+        <span
+          class="info-icon"
+          title="The Secret Access Key associated with your account. Leave empty if the function is public."
+          >&#9432;</span
+        >
+      </label>
+      <input
+        type="text"
+        id="secretAccessKey"
+        name="secretAccessKey"
+        placeholder="public"
+        required
+      />
     </div>
 
     <!-- Input fields za Azure -->
     <div id="azureInputs" style="display: none">
-      <label for="azureFunctionUrl">Azure Function URL:</label>
+      <label for="azureFunctionUrl"
+        >Azure Function URL:
+        <span
+          class="info-icon"
+          title="The function URL. Make sure that CORS allows all (your) domains before testing."
+          >&#9432;</span
+        >
+      </label>
       <input
         type="text"
         id="azureFunctionUrl"
@@ -41,11 +87,19 @@
         required
       />
       <br />
-      <label for="azureFunctionKey">Azure Function Key:</label>
+      <label for="azureFunctionKey"
+        >Azure Function Key:
+        <span
+          class="info-icon"
+          title="The key used for invoking the function. Leave this blank if the function is public."
+          >&#9432;</span
+        >
+      </label>
       <input
         type="text"
         id="azureFunctionKey"
         name="azureFunctionKey"
+        placeholder="public"
         required
       />
       <br />
@@ -53,7 +107,14 @@
 
     <!-- Input fields za Google -->
     <div id="gcloudInputs" style="display: none">
-      <label for="gcloudFunctionUrl">Google Cloud Function URL:</label>
+      <label for="gcloudFunctionUrl"
+        >Google Cloud Function URL:
+        <span
+          class="info-icon"
+          title="The function URL. Make sure that CORS allows all (your) domains before testing."
+          >&#9432;</span
+        >
+      </label>
       <input
         type="text"
         id="gcloudFunctionUrl"
@@ -61,22 +122,44 @@
         required
       />
       <br />
-      <label for="gcloudAccessToken">Access Token:</label>
+      <label for="gcloudAccessToken"
+        >Access Token:
+        <span
+          class="info-icon"
+          title="The access token used for invoking the function. Leave this blank if the function is public."
+          >&#9432;</span
+        >
+      </label>
       <input
         type="text"
         id="gcloudAccessToken"
         name="gcloudAccessToken"
+        placeholder="public"
         required
       />
       <br />
     </div>
 
     <!-- Drugi inputs -->
-    <label for="threshold">Threshold:</label>
-    <input type="number" id="threshold" name="threshold" required />
-    <br />
-    <label for="arraySize">Array Size:</label>
+    <label for="arraySize"
+      >Array Size:
+      <span
+        class="info-icon"
+        title="The length of the array the function will sort using mergesort."
+        >&#9432;</span
+      >
+    </label>
     <input type="number" id="arraySize" name="arraySize" required />
+    <br />
+    <label for="threshold"
+      >Maximum simultaneous requests:
+      <span
+        class="info-icon"
+        title="The maximum amount of requests sent to the function at once. The app starts with 1 request and increases the number of requests sent simultaneously by one every iteration."
+        >&#9432;</span
+      >
+    </label>
+    <input type="number" id="threshold" name="threshold" required />
     <br />
     <input
       type="submit"
@@ -86,7 +169,8 @@
     />
     <br /><br />
 
-    <div style="display: none" id="result"></div>
+    <div id="result" style="display: block"></div>
+    <br>
     <table id="resultsTable">
       <thead>
         <tr>
