@@ -42,16 +42,19 @@ def memory_test(n_kb, test_type, threshold):
                 total_time:.2f} seconds<br>"
         
     elif (test_type == 'read'):
-        # Kreiraj array
-        memory_array = np.random.randint(
-            0, 256, size=num_elements, dtype=np.uint8)
         for i in range(1, threshold + 1):
+            #dinamicki kreiraj nizi
+            memory_arrays = [
+                np.random.randint(0, 256, size=num_elements, dtype=np.uint8) for _ in range(i)
+            ]
+            
             start_time = time.time()
-
             # modificiran kod od superfastpython.com
             with ThreadPoolExecutor(max_workers=i) as executor:
-                futures = [executor.submit(
-                    memory_test_task, num_elements, test_type, memory_array) for _ in range(i)]
+                futures=[]
+                futures = [
+                    executor.submit(memory_test_task, num_elements, test_type, memory_arrays[j]) for j in range(i)
+                ]
                 for future in as_completed(futures):
                     future.result()
         # presmetaj go vremeto i vrati go vo output
