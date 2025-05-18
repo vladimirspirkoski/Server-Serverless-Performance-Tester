@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # heap sort algoritam, modificiran kod prevzemen od www.geeksforgeeks.org
 
@@ -49,7 +49,7 @@ def cpu_test(n, threshold):
         start_time = time.time()
 
         # modificiran kod od superfastpython.com
-        with ThreadPoolExecutor(max_workers=i) as executor:
+        with ProcessPoolExecutor(max_workers=i) as executor:
             futures = [executor.submit(single_sort_task, n) for _ in range(i)]
             # Soberi gi site rezultati otkoga kje zavrsat site threads
             for future in as_completed(futures):

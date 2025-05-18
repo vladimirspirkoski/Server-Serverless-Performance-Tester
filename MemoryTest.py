@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import gc
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 
 def memory_test_task(num_elements, test_type):
@@ -38,7 +38,7 @@ def memory_test(n_kb, test_type, threshold):
         task_durations = []
 
         # modificiran kod od superfastpython.com
-        with ThreadPoolExecutor(max_workers=i) as executor:
+        with ProcessPoolExecutor(max_workers=i) as executor:
             futures = [executor.submit(
                 memory_test_task, num_elements, test_type) for _ in range(i)]
             for future in as_completed(futures):

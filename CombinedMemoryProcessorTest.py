@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # merge sort algoritam, modificiran kod prevzemen od www.scaler.com
 
@@ -53,7 +53,7 @@ def combined_test(n, threshold):
     for i in range(1, threshold + 1):
         start_time = time.time()
 
-        with ThreadPoolExecutor(max_workers=i) as executor:
+        with ProcessPoolExecutor(max_workers=i) as executor:
             futures = [executor.submit(combined_test_task, n)
                        for _ in range(i)]
             for future in as_completed(futures):

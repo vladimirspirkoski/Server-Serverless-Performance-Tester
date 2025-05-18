@@ -79,5 +79,7 @@ def serverless():
 
 
 if __name__ == '__main__':
+    import multiprocessing
+    multiprocessing.freeze_support()
     app.debug = True
     serve(app, host='0.0.0.0', port=80)
