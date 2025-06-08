@@ -13,9 +13,9 @@ Serverless тестирањето испраќа барања со параме�
 <br>
 За Linux верзијата прво треба да се даде execute привилегија со: <code>chmod +x PerformanceTester</code> и потоа се стартува со команда: <code>sudo ./PerformanceTester</code>.
 <br>
-Кодови за serverless функциите: <br>
 
-<br> AWS: <br>
+<h2> Кодови за serverless функциите </h2>
+<h3>AWS</h3>
 
 <pre>import random
 import json
@@ -107,7 +107,7 @@ def lambda_handler(event, context):
             })
         }
     </pre>
-<br> Azure: <br>
+<h3>Azure</h3>
 <pre>
 import azure.functions as func
 import logging
@@ -190,7 +190,7 @@ def sort_array(req: func.HttpRequest) -> func.HttpResponse:
         )
 </pre>
 
-<br> GCloud: <br>
+<h3>GCloud</h3>
 <pre>
 import random
 import json
@@ -265,8 +265,6 @@ def merge(left, right):
 
     return result
 </pre>
-
-<br><br>
-
+<br>
 <h4>Дипломска работа - ФИНКИ</h4>
 <h4>Владимир Спиркоски</h4>
